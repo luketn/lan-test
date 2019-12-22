@@ -14,13 +14,11 @@ import io.netty.handler.codec.http.websocketx.WebSocketServerHandshakerFactory;
 import io.netty.handler.codec.http.websocketx.extensions.compression.WebSocketServerCompressionHandler;
 import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
-import io.netty.util.concurrent.EventExecutorGroup;
-
+import io.netty.util.CharsetUtil;
 
 import static io.netty.handler.codec.http.HttpHeaderNames.HOST;
-import static io.netty.handler.codec.http.HttpMethod.GET;
-import static io.netty.handler.codec.http.HttpResponseStatus.*;
-import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
+
+import java.nio.charset.Charset;
 
 public class LanListener {
     private MessageListener messageListener;
@@ -71,7 +69,7 @@ public class LanListener {
 
         private void handleWebSocketRequest(ChannelHandlerContext channelHandlerContext, WebSocketFrame msg) {
             String ip = channelHandlerContext.channel().remoteAddress().toString();
-            messageListener.messageReceived(ip, "WebSocket\n" + msg.toString());
+            messageListener.messageReceived(ip, "WebSocket\n" + msg.content().toString(CharsetUtil.UTF_8));
         }
 
         private void handleHttpRequest(ChannelHandlerContext channelHandlerContext, FullHttpRequest msg) {
