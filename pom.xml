@@ -13,5 +13,12 @@
         <maven.compiler.source>11</maven.compiler.source>
     </properties>
 
+    <dependencies>
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-all</artifactId>
+            <version>4.1.44.Final</version>
+        </dependency>
+    </dependencies>
 
 </project>
