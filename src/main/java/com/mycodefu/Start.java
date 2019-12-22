@@ -14,4 +14,7 @@ public class Start {
 
         frame.setVisible(true);
     }
+    private static void openConnection(){
+
+    }
 }
