@@ -21,7 +21,7 @@ public class Start implements MessageListener {
         frame.setVisible(true);
 
         lanListener = new LanListener();
-        lanListener.listenForMessages(new Start());
+        lanListener.listenForMessages(port, new Start());
     }
 
     private static String getCurrentIp() throws Throwable {
