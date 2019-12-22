@@ -10,7 +10,7 @@ public class Start implements MessageListener {
 
     public static void main(String[] args) throws Throwable {
         int port = getRandomPort();
-        Frame frame = new Frame("Lan Test-" + getCurrentIp()+":"+port);
+        JFrame frame = new JFrame("Lan Test-" + getCurrentIp()+":"+port);
         JPanel panel = new JPanel();
         frame.add(panel);
         frame.setSize(320, 240);
@@ -18,7 +18,13 @@ public class Start implements MessageListener {
         toggleButton.setText("Toggle Me");
         panel.add(toggleButton);
 
+        JTextField ipBox = new JTextField();
+        ipBox.getAccessibleContext().setAccessibleName("ipBox");
+                ipBox.setColumns(15);
+                panel.add(ipBox);
+
         frame.setVisible(true);
+        frame.setDefaultCloseOperation(3);
 
         lanListener = new LanListener();
         lanListener.listenForMessages(port, new Start());
