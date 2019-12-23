@@ -123,7 +123,7 @@ public class WebSocketClient {
                             }
                         });
 
-                channel = b.connect(uri.getHost(), port).sync().channel();
+                channel = b.connect(host, port).sync().channel();
                 handler.handshakeFuture().sync();
 
                 connected = true;
