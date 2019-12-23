@@ -8,7 +8,7 @@ public class UI extends JFrame {
         super(String.format("LAN Test - %s:%d", IPAddress, port));
         this.setSize(640, 480);
 
-        int numPairs = 5;
+        int numPairs = 6;
 
         JPanel inputs = new JPanel(new SpringLayout());
         this.add(inputs);
@@ -61,6 +61,15 @@ public class UI extends JFrame {
         inputs.add(messageButtonSpacer);
         inputs.add(messageButton);
 
+        JTextArea messages = new JTextArea();
+        messages.getAccessibleContext().setAccessibleName("messages");
+        messages.setRows(1);
+        messages.setColumns(15);
+        JLabel messagesLabel = new JLabel("Remote IP Address:", SwingConstants.TRAILING);
+        messagesLabel.setLabelFor(ipBox);
+        inputs.add(messagesLabel);
+        inputs.add(messages);
+        
         //Lay out the panel.
         makeCompactGrid(inputs,
                 numPairs, 2, //rows, cols

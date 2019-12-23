@@ -6,7 +6,8 @@ public class Start implements LanEventListener, UIEventListener, WebSocketClient
     private LanListener lanListener;
     private LanConnector lanConnector;
     private String serverConnectionId;
-
+private UI ui;
+    
     public static void main(String[] args) throws Throwable {
         new Start().start();
     }
@@ -18,7 +19,7 @@ public class Start implements LanEventListener, UIEventListener, WebSocketClient
         int port = IPUtils.getRandomPort();
         String currentIp = IPUtils.getCurrentIp();
 
-        UI ui = new UI(currentIp, port, this);
+        ui = new UI(currentIp, port, this);
         ui.display();
 
         lanListener = new LanListener();
