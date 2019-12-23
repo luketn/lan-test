@@ -92,7 +92,7 @@ public class WebSocketClient {
         }
     }
 
-    public boolean connect() {
+    public void connect() {
         if (!connected) {
             this.group = new NioEventLoopGroup();
             String id = "";
@@ -129,10 +129,9 @@ public class WebSocketClient {
                 connected = true;
 
             } catch (Exception e) {
-                this.callback.error(id, e);
+                this.callback.clientError(id, e);
+                throw new RuntimeException("Failed to connect", e);
             }
         }
-
-        return connected;
     }
 }

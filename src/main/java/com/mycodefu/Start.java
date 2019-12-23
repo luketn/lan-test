@@ -1,6 +1,8 @@
 package com.mycodefu;
 
-public class Start implements MessageListener, UIEventListener {
+import com.mycodefu.com.mycodefu.websockets.client.WebSocketClientHandler;
+
+public class Start implements MessageListener, UIEventListener, WebSocketClientHandler.SocketCallback {
     private LanListener lanListener;
     private LanConnector lanConnector;
 
@@ -30,7 +32,7 @@ public class Start implements MessageListener, UIEventListener {
     @Override
     public void connectClicked(String remoteIP, int remotePort) {
         lanConnector = new LanConnector();
-        lanConnector.connect(remoteIP, remotePort);
+        lanConnector.connect(remoteIP, remotePort, this);
     }
 
     @Override
@@ -46,5 +48,25 @@ public class Start implements MessageListener, UIEventListener {
         if (lanConnector != null) {
             lanConnector.sendMessage(text);
         }
+    }
+
+    @Override
+    public void clientDisconnected(String id) {
+        System.out.println(String.format("Client %s disconnected.", id));
+    }
+
+    @Override
+    public void clientConnected(String id) {
+        System.out.println(String.format("Client %s connected.", id));
+    }
+
+    @Override
+    public void clientMessageReceived(String id, String text) {
+        System.out.println(String.format("Message received from client %s: %s", id, text));
+    }
+
+    @Override
+    public void clientError(String id, Throwable e) {
+        System.out.println(String.format("Error occurred on client %s:\n%s", id, e));
     }
 }

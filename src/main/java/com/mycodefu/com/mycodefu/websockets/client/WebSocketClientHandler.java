@@ -44,7 +44,7 @@ public class WebSocketClientHandler extends SimpleChannelInboundHandler<Object> 
 
     @Override
     public void channelInactive(ChannelHandlerContext ctx) {
-        callback.disconnected(id);
+        callback.clientDisconnected(id);
     }
 
     @Override
@@ -55,12 +55,12 @@ public class WebSocketClientHandler extends SimpleChannelInboundHandler<Object> 
                 handshaker.finishHandshake(ch, (FullHttpResponse) msg);
                 System.out.println("WebSocket Client connected!");
                 handshakeFuture.setSuccess();
-                callback.connected(id);
+                callback.clientConnected(id);
 
             } catch (WebSocketHandshakeException e) {
                 System.out.println("WebSocket Client failed to connect");
                 handshakeFuture.setFailure(e);
-                callback.error(id, e);
+                callback.clientError(id, e);
             }
             return;
         }
@@ -70,7 +70,7 @@ public class WebSocketClientHandler extends SimpleChannelInboundHandler<Object> 
             IllegalStateException illegalStateException = new IllegalStateException(
                     "Unexpected FullHttpResponse (getStatus=" + response.status() +
                             ", content=" + response.content().toString(CharsetUtil.UTF_8) + ')');
-            callback.error(id, illegalStateException);
+            callback.clientError(id, illegalStateException);
             throw illegalStateException;
         }
 
@@ -79,14 +79,14 @@ public class WebSocketClientHandler extends SimpleChannelInboundHandler<Object> 
             TextWebSocketFrame textFrame = (TextWebSocketFrame) frame;
             String text = textFrame.text();
             System.out.println("WebSocket Client received message: " + text);
-            callback.messageReceived(id, text);
+            callback.clientMessageReceived(id, text);
 
         } else if (frame instanceof PongWebSocketFrame) {
             System.out.println("WebSocket Client received pong");
         } else if (frame instanceof CloseWebSocketFrame) {
             System.out.println("WebSocket Client received closing");
             ch.close();
-            callback.disconnected(id);
+            callback.clientDisconnected(id);
         }
     }
 
@@ -97,7 +97,7 @@ public class WebSocketClientHandler extends SimpleChannelInboundHandler<Object> 
             handshakeFuture.setFailure(cause);
         }
         ctx.close();
-        callback.error(id, cause);
+        callback.clientError(id, cause);
     }
 
     public String getId() {
@@ -105,9 +105,9 @@ public class WebSocketClientHandler extends SimpleChannelInboundHandler<Object> 
     }
 
     public interface SocketCallback {
-        void disconnected(String id);
-        void connected(String id);
-        void messageReceived(String id, String text);
-        void error(String id, Throwable e);
+        void clientDisconnected(String id);
+        void clientConnected(String id);
+        void clientMessageReceived(String id, String text);
+        void clientError(String id, Throwable e);
     }
 }
