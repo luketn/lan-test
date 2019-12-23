@@ -4,6 +4,8 @@ import javax.swing.*;
 import java.awt.*;
 
 public class UI extends JFrame {
+	private JTextArea messages;
+	
     public UI(String IPAddress, int port, UIEventListener uiEventListener) {
         super(String.format("LAN Test - %s:%d", IPAddress, port));
         this.setSize(640, 480);
@@ -61,11 +63,11 @@ public class UI extends JFrame {
         inputs.add(messageButtonSpacer);
         inputs.add(messageButton);
 
-        JTextArea messages = new JTextArea();
+        messages = new JTextArea();
         messages.getAccessibleContext().setAccessibleName("messages");
         messages.setRows(1);
         messages.setColumns(15);
-        JLabel messagesLabel = new JLabel("Remote IP Address:", SwingConstants.TRAILING);
+        JLabel messagesLabel = new JLabel("messages:", SwingConstants.TRAILING);
         messagesLabel.setLabelFor(ipBox);
         inputs.add(messagesLabel);
         inputs.add(messages);
@@ -148,4 +150,9 @@ public class UI extends JFrame {
         Component c = parent.getComponent(row * cols + col);
         return layout.getConstraints(c);
     }
+    
+    public JTextArea getMessagesTextArea() {
+    	return messages;
+    }
+    
 }

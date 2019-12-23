@@ -7,7 +7,7 @@ public class Start implements LanEventListener, UIEventListener, WebSocketClient
     private LanConnector lanConnector;
     private String serverConnectionId;
 private UI ui;
-    
+
     public static void main(String[] args) throws Throwable {
         new Start().start();
     }
@@ -63,6 +63,7 @@ private UI ui;
     @Override
     public void clientMessageReceived(String id, String text) {
         System.out.println(String.format("Message received from client %s: %s", id, text));
+        ui.getMessagesTextArea().setText(String.format("%s\n%s", text, ui.getMessagesTextArea().getText()));
     }
 
     @Override
@@ -78,5 +79,7 @@ private UI ui;
     @Override
     public void messageReceived(String id, String sourceIpAddress, String message) {
         System.out.println(String.format("Received message from %s: %s", sourceIpAddress, message));
+        
+        ui.getMessagesTextArea().setText(String.format("%s\n%s", message, ui.getMessagesTextArea().getText()));
     }
 }
