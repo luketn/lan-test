@@ -8,6 +8,7 @@ import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.HttpObjectAggregator;
 import io.netty.handler.codec.http.HttpServerCodec;
+import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
 import io.netty.handler.codec.http.websocketx.WebSocketFrame;
 import io.netty.handler.codec.http.websocketx.WebSocketServerHandshaker;
 import io.netty.handler.codec.http.websocketx.WebSocketServerHandshakerFactory;
@@ -16,15 +17,20 @@ import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
 import io.netty.util.CharsetUtil;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
 import static io.netty.handler.codec.http.HttpHeaderNames.HOST;
 
-import java.nio.charset.Charset;
-
 public class LanListener {
-    private MessageListener messageListener;
+    private LanEventListener lanEventListener;
+    private Map<String, Channel> connections;
 
-    public void listenForMessages(int port, MessageListener messageListener) {
-        this.messageListener = messageListener;
+    public void listenForMessages(int port, LanEventListener lanEventListener) {
+        this.lanEventListener = lanEventListener;
+        this.connections = new ConcurrentHashMap<>();
+
         EventLoopGroup bossGroup = new NioEventLoopGroup(1);
         EventLoopGroup workerGroup = new NioEventLoopGroup();
         try {
@@ -44,6 +50,13 @@ public class LanListener {
         }
     }
 
+    public void sendMessage(String id, String message) {
+        if (connections.containsKey(id)) {
+            WebSocketFrame frame = new TextWebSocketFrame(message);
+            connections.get(id).writeAndFlush(frame);
+        }
+    }
+
     private class WebSocketServerInitializer extends ChannelInitializer<SocketChannel> {
 
         @Override
@@ -58,6 +71,15 @@ public class LanListener {
     }
 
     private class WebSocketServerHandler extends SimpleChannelInboundHandler<Object> {
+
+        @Override
+        public void channelInactive(ChannelHandlerContext ctx) throws Exception {
+            super.channelInactive(ctx);
+
+            String id = ctx.channel().id().asLongText();
+            connections.remove(id);
+        }
+
         @Override
         protected void channelRead0(ChannelHandlerContext channelHandlerContext, Object msg) throws Exception {
             if (msg instanceof FullHttpRequest) {
@@ -68,8 +90,10 @@ public class LanListener {
         }
 
         private void handleWebSocketRequest(ChannelHandlerContext channelHandlerContext, WebSocketFrame msg) {
+            String id = channelHandlerContext.channel().id().asLongText();
+
             String ip = channelHandlerContext.channel().remoteAddress().toString();
-            messageListener.messageReceived(ip, "WebSocket\n" + msg.content().toString(CharsetUtil.UTF_8));
+            lanEventListener.messageReceived(id, ip, "WebSocket\n" + msg.content().toString(CharsetUtil.UTF_8));
         }
 
         private void handleHttpRequest(ChannelHandlerContext channelHandlerContext, FullHttpRequest msg) {
@@ -85,7 +109,10 @@ public class LanListener {
                 ChannelFuture channelFuture = handshaker.handshake(channelHandlerContext.channel(), msg);
                 if (channelFuture.isSuccess()) {
                     System.out.println(channelHandlerContext.channel() + " Connected");
-                    return;
+
+                    String id = channelHandlerContext.channel().id().asLongText();
+                    connections.put(id, channelHandlerContext.channel());
+                    lanEventListener.connectionReceived(id);
                 }
             }
         }

@@ -2,9 +2,10 @@ package com.mycodefu;
 
 import com.mycodefu.websockets.client.WebSocketClientHandler;
 
-public class Start implements MessageListener, UIEventListener, WebSocketClientHandler.SocketCallback {
+public class Start implements LanEventListener, UIEventListener, WebSocketClientHandler.SocketCallback {
     private LanListener lanListener;
     private LanConnector lanConnector;
+    private String serverConnectionId;
 
     public static void main(String[] args) throws Throwable {
         new Start().start();
@@ -21,13 +22,9 @@ public class Start implements MessageListener, UIEventListener, WebSocketClientH
         ui.display();
 
         lanListener = new LanListener();
-        lanListener.listenForMessages(port, new Start());
+        lanListener.listenForMessages(port, this);
     }
 
-    @Override
-    public void messageReceived(String sourceIpAddress, String message) {
-        System.out.println(String.format("Received message from %s: %s", sourceIpAddress, message));
-    }
 
     @Override
     public void connectClicked(String remoteIP, int remotePort) {
@@ -47,6 +44,8 @@ public class Start implements MessageListener, UIEventListener, WebSocketClientH
     public void sendMessageClicked(String text) {
         if (lanConnector != null) {
             lanConnector.sendMessage(text);
+        } else if (serverConnectionId != null) {
+            lanListener.sendMessage(serverConnectionId, text);
         }
     }
 
@@ -68,5 +67,15 @@ public class Start implements MessageListener, UIEventListener, WebSocketClientH
     @Override
     public void clientError(String id, Throwable e) {
         System.out.println(String.format("Error occurred on client %s:\n%s", id, e));
+    }
+
+    @Override
+    public void connectionReceived(String id) {
+        this.serverConnectionId = id;
+    }
+
+    @Override
+    public void messageReceived(String id, String sourceIpAddress, String message) {
+        System.out.println(String.format("Received message from %s: %s", sourceIpAddress, message));
     }
 }
