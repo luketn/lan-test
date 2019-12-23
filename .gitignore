@@ -1,3 +1,7 @@
 /lan-test.iml
 /.idea/
 /target/
+/bin/
+/.settings/
+/.project
+/.classpath
