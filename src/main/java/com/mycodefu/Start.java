@@ -37,7 +37,7 @@ public class Start implements MessageListener, UIEventListener {
     }
 
     @Override
-    public void toggleClicked() {
-        System.out.println("Sending toggle message!");
+    public void sendMessage(String text) {
+        System.out.println(String.format("Sending message '%s'!", text));
     }
 }

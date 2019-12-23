@@ -8,7 +8,7 @@ public class UI extends JFrame {
         super(String.format("LAN Test - %s:%d", IPAddress, port));
         this.setSize(640, 480);
 
-        int numPairs = 4;
+        int numPairs = 5;
 
         JPanel inputs = new JPanel(new SpringLayout());
         this.add(inputs);
@@ -41,18 +41,25 @@ public class UI extends JFrame {
                 connectButton.setText("Connect");
             }
         });
-        JLabel connectButtonLabel = new JLabel("", SwingConstants.TRAILING);
-        ipLabel.setLabelFor(connectButton);
-        inputs.add(connectButtonLabel);
+        JPanel connectButtonSpacer = new JPanel();
+        inputs.add(connectButtonSpacer);
         inputs.add(connectButton);
 
-        JToggleButton toggleButton = new JToggleButton();
-        toggleButton.setText("Toggle Me");
-        toggleButton.addActionListener(e -> uiEventListener.toggleClicked());
-        JLabel toggleButtonLabel = new JLabel("", SwingConstants.TRAILING);
-        ipLabel.setLabelFor(toggleButton);
-        inputs.add(toggleButtonLabel);
-        inputs.add(toggleButton);
+        JTextField messageBox = new JTextField();
+        messageBox.getAccessibleContext().setAccessibleName("messageBox");
+        messageBox.setColumns(50);
+        messageBox.setText("Message Goes Here");
+        JLabel messageLabel = new JLabel("Enter Message:", SwingConstants.TRAILING);
+        messageLabel.setLabelFor(messageBox);
+        inputs.add(messageLabel);
+        inputs.add(messageBox);
+
+        JButton messageButton = new JButton();
+        messageButton.setText("Send Message");
+        messageButton.addActionListener(e -> uiEventListener.sendMessage(messageBox.getText()));
+        JPanel messageButtonSpacer = new JPanel();
+        inputs.add(messageButtonSpacer);
+        inputs.add(messageButton);
 
         //Lay out the panel.
         makeCompactGrid(inputs,
