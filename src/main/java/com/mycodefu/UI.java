@@ -14,7 +14,7 @@ public class UI extends JFrame {
         this.add(inputs);
 
         JTextField ipBox = new JTextField();
-        ipBox.getAccessibleContext().setAccessibleName("ipBox");
+        ipBox.getAccessibleContext().setAccessibleName("remote ip");
         ipBox.setColumns(15);
         ipBox.setText("192.168.0.78");
         JLabel ipLabel = new JLabel("Remote IP Address:", SwingConstants.TRAILING);
@@ -23,7 +23,7 @@ public class UI extends JFrame {
         inputs.add(ipBox);
 
         JTextField portBox = new JTextField();
-        portBox.getAccessibleContext().setAccessibleName("portBox");
+        portBox.getAccessibleContext().setAccessibleName("remote port");
         portBox.setColumns(5);
         portBox.setText("50000");
         JLabel portLabel = new JLabel("Remote Port Number:", SwingConstants.TRAILING);
