@@ -1,12 +1,15 @@
 package com.mycodefu;
 
 import com.mycodefu.websockets.client.WebSocketClientHandler;
+import com.mycodefu.websockets.server.WebSocketServer;
+import com.mycodefu.websockets.server.WebSocketServerHandler;
+import io.netty.channel.ChannelId;
 
-public class Start implements LanEventListener, UIEventListener, WebSocketClientHandler.SocketCallback {
+public class Start implements WebSocketServerHandler.ServerConnectionCallback, UIEventListener, WebSocketClientHandler.SocketCallback {
     private LanListener lanListener;
     private LanConnector lanConnector;
-    private String serverConnectionId;
-private UI ui;
+    private ChannelId serverConnectionId;
+    private UI ui;
 
     public static void main(String[] args) throws Throwable {
         new Start().start();
@@ -16,14 +19,15 @@ private UI ui;
         System.out.println("Cores: " + Runtime.getRuntime().availableProcessors());
         System.out.println("Threads for Worker: " + Runtime.getRuntime().availableProcessors() * 2);
 
-        int port = IPUtils.getRandomPort();
+        lanListener = new LanListener();
+        lanListener.listenForMessages(this);
+
+        int port = lanListener.getPort();
         String currentIp = IPUtils.getCurrentIp();
 
         ui = new UI(currentIp, port, this);
         ui.display();
 
-        lanListener = new LanListener();
-        lanListener.listenForMessages(port, this);
     }
 
 
@@ -72,14 +76,14 @@ private UI ui;
     }
 
     @Override
-    public void connectionReceived(String id) {
+    public void connectionReceived(ChannelId id) {
         this.serverConnectionId = id;
     }
 
     @Override
-    public void messageReceived(String id, String sourceIpAddress, String message) {
+    public void messageReceived(ChannelId id, String sourceIpAddress, String message) {
         System.out.println(String.format("Received message from %s: %s", sourceIpAddress, message));
-        
+
         ui.getMessagesTextArea().setText(String.format("%s\n%s", message, ui.getMessagesTextArea().getText()));
     }
 }
