@@ -1,7 +1,8 @@
 package com.mycodefu;
 
 public class Start implements MessageListener, UIEventListener {
-    private static LanListener lanListener;
+    private LanListener lanListener;
+    private LanConnector lanConnector;
 
     public static void main(String[] args) throws Throwable {
         new Start().start();
@@ -28,16 +29,22 @@ public class Start implements MessageListener, UIEventListener {
 
     @Override
     public void connectClicked(String remoteIP, int remotePort) {
-        System.out.println(String.format("Connecting to %s:%d!", remoteIP, remotePort));
+        lanConnector = new LanConnector();
+        lanConnector.connect(remoteIP, remotePort);
     }
 
     @Override
     public void disconnectClicked() {
-        System.out.println("Disconnecting!");
+        if (lanConnector != null) {
+            lanConnector.disconnect();
+            lanConnector = null;
+        }
     }
 
     @Override
-    public void sendMessage(String text) {
-        System.out.println(String.format("Sending message '%s'!", text));
+    public void sendMessageClicked(String text) {
+        if (lanConnector != null) {
+            lanConnector.sendMessage(text);
+        }
     }
 }

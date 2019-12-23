@@ -56,7 +56,7 @@ public class UI extends JFrame {
 
         JButton messageButton = new JButton();
         messageButton.setText("Send Message");
-        messageButton.addActionListener(e -> uiEventListener.sendMessage(messageBox.getText()));
+        messageButton.addActionListener(e -> uiEventListener.sendMessageClicked(messageBox.getText()));
         JPanel messageButtonSpacer = new JPanel();
         inputs.add(messageButtonSpacer);
         inputs.add(messageButton);
