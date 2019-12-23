@@ -1,7 +1,7 @@
 package com.mycodefu;
 
-import com.mycodefu.com.mycodefu.websockets.client.WebSocketClient;
-import com.mycodefu.com.mycodefu.websockets.client.WebSocketClientHandler;
+import com.mycodefu.websockets.client.WebSocketClient;
+import com.mycodefu.websockets.client.WebSocketClientHandler;
 
 public class LanConnector {
     private WebSocketClient webSocketClient;

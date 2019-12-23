@@ -1,6 +1,6 @@
 package com.mycodefu;
 
-import com.mycodefu.com.mycodefu.websockets.client.WebSocketClientHandler;
+import com.mycodefu.websockets.client.WebSocketClientHandler;
 
 public class Start implements MessageListener, UIEventListener, WebSocketClientHandler.SocketCallback {
     private LanListener lanListener;

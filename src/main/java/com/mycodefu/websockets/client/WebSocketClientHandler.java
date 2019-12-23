@@ -1,4 +1,4 @@
-package com.mycodefu.com.mycodefu.websockets.client;
+package com.mycodefu.websockets.client;
 
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
