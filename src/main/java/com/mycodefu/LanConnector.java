@@ -6,9 +6,9 @@ import com.mycodefu.websockets.client.WebSocketClientHandler;
 public class LanConnector {
     private WebSocketClient webSocketClient;
 
-    public void connect(String ipAddress, int port, WebSocketClientHandler.SocketCallback callback) {
-        System.out.println(String.format("Connecting to %s:%d!", ipAddress, port));
-        webSocketClient = new WebSocketClient(String.format("ws://%s:%d/", ipAddress, port), callback);
+    public void connect(String webSocketAddress, WebSocketClientHandler.SocketCallback callback) {
+        System.out.println(String.format("Connecting to %s!", webSocketAddress));
+        webSocketClient = new WebSocketClient(webSocketAddress, callback);
         webSocketClient.connect();
     }
     public void disconnect() {

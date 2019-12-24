@@ -1,18 +1,17 @@
 package com.mycodefu;
 
 import com.mycodefu.websockets.client.WebSocketClientHandler;
-import com.mycodefu.websockets.server.WebSocketServer;
 import com.mycodefu.websockets.server.WebSocketServerHandler;
 import io.netty.channel.ChannelId;
 
-public class Start implements WebSocketServerHandler.ServerConnectionCallback, UIEventListener, WebSocketClientHandler.SocketCallback {
+public class LanTest implements WebSocketServerHandler.ServerConnectionCallback, UIEventListener, WebSocketClientHandler.SocketCallback {
     private LanListener lanListener;
     private LanConnector lanConnector;
     private ChannelId serverConnectionId;
     private UI ui;
 
     public static void main(String[] args) throws Throwable {
-        new Start().start();
+        new LanTest().start();
     }
 
     private void start() throws Throwable {
@@ -30,11 +29,10 @@ public class Start implements WebSocketServerHandler.ServerConnectionCallback, U
 
     }
 
-
     @Override
-    public void connectClicked(String remoteIP, int remotePort) {
+    public void connectClicked(String webSocketAddress) {
         lanConnector = new LanConnector();
-        lanConnector.connect(remoteIP, remotePort, this);
+        lanConnector.connect(webSocketAddress, this);
     }
 
     @Override
