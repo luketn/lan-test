@@ -14,14 +14,19 @@ import io.netty.util.CharsetUtil;
 import static io.netty.handler.codec.http.HttpHeaderNames.HOST;
 
 public class WebSocketServerHandler extends SimpleChannelInboundHandler<Object> {
-    private final ChannelId id;
     private final ChannelGroup allChannels;
     private final ServerConnectionCallback callback;
 
-    public WebSocketServerHandler(ChannelId id, ChannelGroup allChannels, ServerConnectionCallback callback) {
-        this.id = id;
+    public WebSocketServerHandler(ChannelGroup allChannels, ServerConnectionCallback callback) {
         this.allChannels = allChannels;
         this.callback = callback;
+    }
+
+    @Override
+    public void channelInactive(ChannelHandlerContext ctx) throws Exception {
+        super.channelInactive(ctx);
+
+        callback.clientDisconnected(ctx.channel().id());
     }
 
     @Override
@@ -35,7 +40,7 @@ public class WebSocketServerHandler extends SimpleChannelInboundHandler<Object> 
 
     private void handleWebSocketRequest(ChannelHandlerContext channelHandlerContext, WebSocketFrame msg) {
         String ip = channelHandlerContext.channel().remoteAddress().toString();
-        callback.messageReceived(id, ip, "WebSocket\n" + msg.content().toString(CharsetUtil.UTF_8));
+        callback.messageReceived(channelHandlerContext.channel().id(), ip, "WebSocket\n" + msg.content().toString(CharsetUtil.UTF_8));
     }
 
     private void handleHttpRequest(ChannelHandlerContext channelHandlerContext, FullHttpRequest msg) {
@@ -52,7 +57,7 @@ public class WebSocketServerHandler extends SimpleChannelInboundHandler<Object> 
             if (channelFuture.isSuccess()) {
                 System.out.println(channelHandlerContext.channel() + " Connected");
 
-                callback.connectionReceived(id);
+                callback.clientConnected(channelHandlerContext.channel().id());
             }
         }
     }
@@ -63,7 +68,8 @@ public class WebSocketServerHandler extends SimpleChannelInboundHandler<Object> 
     }
 
     public interface ServerConnectionCallback {
-        void connectionReceived(ChannelId id);
+        void clientConnected(ChannelId id);
         void messageReceived(ChannelId id, String sourceIpAddress, String message);
+        void clientDisconnected(ChannelId id);
     }
 }

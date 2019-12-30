@@ -74,7 +74,7 @@ public class LanTest implements WebSocketServerHandler.ServerConnectionCallback,
     }
 
     @Override
-    public void connectionReceived(ChannelId id) {
+    public void clientConnected(ChannelId id) {
         this.serverConnectionId = id;
     }
 
@@ -83,5 +83,10 @@ public class LanTest implements WebSocketServerHandler.ServerConnectionCallback,
         System.out.println(String.format("Received message from %s: %s", sourceIpAddress, message));
 
         ui.getMessagesTextArea().setText(String.format("%s\n%s", message, ui.getMessagesTextArea().getText()));
+    }
+
+    @Override
+    public void clientDisconnected(ChannelId id) {
+        System.out.println("Disconnected");
     }
 }
